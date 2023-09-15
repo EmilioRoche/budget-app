@@ -35,7 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
-    Route::get('/transactions', [TransactionController::class, 'create'])->name('transaction.create');
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transaction.index');
+    Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transaction.create');
 });
 
 require __DIR__.'/auth.php';

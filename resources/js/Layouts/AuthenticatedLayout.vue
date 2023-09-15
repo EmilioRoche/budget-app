@@ -35,8 +35,14 @@ const showingNavigationDropdown = ref(false);
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <!--route().current will show up as underlined/'active' if endpoint matches-->
-                                <NavLink :href="route('transaction.create')" :active="route().current('transaction.create')">
+                                <NavLink :href="route('transaction.index')" :active="route().current('transaction.index')">
                                     Transactions
+                                </NavLink>
+                            </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <!--route().current will show up as underlined/'active' if endpoint matches-->
+                                <NavLink :href="route('transaction.create')" :active="route().current('transaction.create')">
+                                    Create a new Transaction
                                 </NavLink>
                             </div>
                         </div>

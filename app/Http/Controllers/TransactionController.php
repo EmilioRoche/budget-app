@@ -14,11 +14,18 @@ class TransactionController extends Controller
     /**
      * Display the users transactions
      */
-    public function create(Request $request): Response
+    public function index(Request $request): Response
     {
         return Inertia::render('Transactions/Transactions');
 
     }
 
+    /**
+     * Create new transaction
+     */
+    public function create(Request $request): Response
+    {
+        return Inertia::render('Transactions/CreateNewTransaction');
+    }
 }
 
