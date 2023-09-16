@@ -16,7 +16,8 @@ class TransactionController extends Controller
      */
     public function index(Request $request): Response
     {
-        return Inertia::render('Transactions/Transactions');
+        $userExpense = Transaction::where('user_id', Auth::user()->id)->get();
+        return Inertia::render('Expenses/Expenses' , ['Expenses' => $Expenses]);
 
     }
 
@@ -25,7 +26,7 @@ class TransactionController extends Controller
      */
     public function create(Request $request): Response
     {
-        return Inertia::render('Transactions/CreateNewTransaction');
+        return Inertia::render('Expenses/CreateNewExpense');
     }
 }
 

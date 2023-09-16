@@ -22,7 +22,7 @@ const form = useForm({
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">New Transaction</h2>
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">New Expense</h2>
 
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                 Fill out the information needed for the transaction record.
@@ -30,7 +30,7 @@ const form = useForm({
         </header>
         <form class="mt-6 space-y-6">
             <div>
-                <InputLabel for="name" value="Transaction Name" />
+                <InputLabel for="name" value="Expense Name" />
 
                 <TextInput
                     id="name"

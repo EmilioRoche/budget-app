@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Expense;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 class ExpenseController extends Controller
 {
     /**
@@ -14,7 +15,17 @@ class ExpenseController extends Controller
     public function index()
     {
         //return all expenses
-        return Expense::orderBy('id', 'DESC')->get();
+        $userExpenses = Expense::where('user_id', Auth::user()->id)->get();
+        $expenseData = $userExpenses->map(function ($expense) {
+            return [
+                'id' => $expense->id,
+                'name' => $expense->name,
+                'amount' => $expense->amount,
+                // Add other attributes as needed
+            ];
+        });
+        return Inertia::render('Expenses/Expenses' , ['Expenses' => $expenseData]);
+        //return Expense::orderBy('id', 'DESC')->get();
     }
 
     /**
@@ -22,7 +33,7 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Expenses/CreateNewExpense');
     }
 
     /**

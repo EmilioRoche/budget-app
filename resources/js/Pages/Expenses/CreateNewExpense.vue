@@ -1,11 +1,11 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import SubmitNewTransaction from './Partials/SubmitNewTransaction.vue';
+import SubmitNewExpense from './Partials/SubmitNewExpense.vue';
 import { Head } from '@inertiajs/vue3';
 </script>
 
 <template>
-    <Head title="Create a Transaction" />
+    <Head title="Create a Expense" />
 
     <AuthenticatedLayout>
         <template #header>
@@ -22,7 +22,7 @@ import { Head } from '@inertiajs/vue3';
         </div>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <SubmitNewTransaction
+                <SubmitNewExpense
                     class="max-w-xl"
                 />
             </div>

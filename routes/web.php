@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ExpenseController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -35,8 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
-    Route::get('/transactions', [TransactionController::class, 'index'])->name('transaction.index');
-    Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transaction.create');
+    Route::get('/expenses', [ExpenseController::class, 'index'])->name('expense.index');
+    Route::get('/expenses/create', [ExpenseController::class, 'create'])->name('expense.create');
 });
 
 require __DIR__.'/auth.php';
