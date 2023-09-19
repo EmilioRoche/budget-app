@@ -22,8 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //expenses - will need these for returning data
 Route::get('/expenses', [ExpenseController::class, 'getExpenses'])->middleware("auth");
 //remove comments when updated 
-// Route::group(['prefix' => '/expense', 'middleware' => ['auth']], function(){
-//     Route::post('/store', [ExpenseController::class, 'store']);
+Route::group(['prefix' => '/expense', 'middleware' => ['auth']], function(){
+    Route::post('/store', [ExpenseController::class, 'store']);
 //     Route::put('/{id}', [ExpenseController::class, 'update']);
 //     Route::delete('/{id}', [ExpenseController::class, 'destroy']);
-// });
+});

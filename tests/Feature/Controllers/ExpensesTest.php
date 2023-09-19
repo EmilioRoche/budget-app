@@ -14,6 +14,20 @@ class ExpensesTest extends TestCase
     public function test_expense_store(): void
     {
         $user = User::factory()->create();
+        $this->actingAs($user);
+        $data = [
+            "expense" => [
+                "name" => "wallet",
+                "month" => "December",
+                "year" => 2023,
+                "type" => "personal",
+                "recurring" => false,
+                "price" => 2245
+            ]
+        ];
+        $response = $this->post('/api/expense/store', $data);
+
+        $response->assertStatus(201);
     }
 }
 

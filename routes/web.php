@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     //expenses
     Route::get('/expenses', [ExpenseController::class, 'index'])->name('expense.index');
+    //display 'create page'
     Route::get('/expenses/create', [ExpenseController::class, 'create'])->name('expense.create');
 });
 
