@@ -10,6 +10,7 @@ use Tests\TestCase;
 
 class ExpensesTest extends TestCase
 {
+    use RefreshDatabase;
     //finish up later
     public function test_expense_store(): void
     {
