@@ -14,17 +14,8 @@ class ExpenseController extends Controller
      */
     public function index()
     {
-        //return all expenses
-        $userExpenses = Expense::where('user_id', Auth::user()->id)->get();
-        $expenseData = $userExpenses->map(function ($expense) {
-            return [
-                'id' => $expense->id,
-                'name' => $expense->name,
-                'amount' => $expense->amount,
-                // Add other attributes as needed
-            ];
-        });
-        return Inertia::render('Expenses/Expenses' , ['Expenses' => $expenseData]);
+        $expenseData = $this->getExpenses();
+        return Inertia::render('Expenses/Expenses', ['Expenses' => $expenseData]);
         //return Expense::orderBy('id', 'DESC')->get();
     }
 
@@ -91,5 +82,27 @@ class ExpenseController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Get expenses
+     */
+    public function getExpenses()
+    {
+        //return all expenses
+        $userExpenses = Expense::where('user_id', Auth::user()->id)->get();
+        $expenseData = $userExpenses->map(function ($expense) {
+            return [
+                'id' => $expense->id,
+                'name' => $expense->name,
+                //maybe update left side to amount
+                'price' => $expense->price,
+                'month' => $expense->month,
+                'year' => $expense->year,
+                'type' => $expense->type,
+                // Add other attributes as needed
+            ];
+        });
+        return $expenseData;
     }
 }

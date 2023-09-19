@@ -19,10 +19,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//expenses
-Route::get('/expenses', [ExpenseController::class, 'index'])->middleware("auth");
+//expenses - will need these for returning data
+Route::get('/expenses', [ExpenseController::class, 'getExpenses'])->middleware("auth");
+//remove comments when updated 
 Route::group(['prefix' => '/expense', 'middleware' => ['auth']], function(){
     Route::post('/store', [ExpenseController::class, 'store']);
-    Route::put('/{id}', [ExpenseController::class, 'update']);
-    Route::delete('/{id}', [ExpenseController::class, 'destroy']);
+//     Route::put('/{id}', [ExpenseController::class, 'update']);
+//     Route::delete('/{id}', [ExpenseController::class, 'destroy']);
 });
