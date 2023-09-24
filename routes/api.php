@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/expenses', [ExpenseController::class, 'getExpenses'])->middleware("auth");
 //remove comments when updated 
 Route::group(['prefix' => '/expense', 'middleware' => ['auth']], function(){
-    Route::post('/store', [ExpenseController::class, 'store']);
+    Route::post('/store', [ExpenseController::class, 'store'])->name('api.expense.store');
 //     Route::put('/{id}', [ExpenseController::class, 'update']);
 //     Route::delete('/{id}', [ExpenseController::class, 'destroy']);
 });

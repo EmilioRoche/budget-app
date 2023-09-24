@@ -33,18 +33,21 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {        
         if(Auth::check()) {
-            $newExpense = new Expense();
-            $user = Auth::user();
-            $newExpense->user_id = $user->id;
-            $newExpense->name = $request->expense["name"];
-            $newExpense->month = $request->expense["month"];
-            $newExpense->year = $request->expense["year"];
-            $newExpense->type = $request->expense["type"];
-            $newExpense->recurring = $request->expense["recurring"];
-            $newExpense->price = $request->expense["price"];
-            $newExpense->save();
-            return $newExpense;
-            
+            Log::info('Request:', ['info' => $request]);
+            if($request){
+                $newExpense = new Expense();
+                $user = Auth::user();
+                $newExpense->user_id = $user->id;
+                $newExpense->name = $request->expense["name"];
+                $newExpense->month = $request->expense["month"];
+                $newExpense->year = $request->expense["year"];
+                $newExpense->type = $request->expense["type"];
+                $newExpense->recurring = $request->expense["recurring"];
+                $newExpense->price = $request->expense["price"];
+                $newExpense->save();
+                return response()->json($newExpense, 201);
+                //return Redirect::route('expense.index')::with('message', 'The expense has been added successfully!');
+            }
         }
         else {
             Log::info('Authentication Status:', ['is_authenticated' => Auth::check()]);

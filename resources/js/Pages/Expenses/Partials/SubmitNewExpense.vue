@@ -1,8 +1,10 @@
 <script setup>
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
+import axios from 'axios';
 import { ref } from 'vue';
 
 defineProps({
@@ -12,44 +14,77 @@ defineProps({
 
 const form = useForm({
     name: "",
-    amount: "",
+    price: "",
     type: "",
     month: "",
     year: "",
     recurring: "",
 });
 
-const formattedPrice = ref('');
 
-const formatAmount = (event) => {
-    const key = event.key;
-    const currentInput = formattedPrice.value;
-    // Allow numbers, backspace, and a single decimal point
-    if (/[\d.]/.test(key) || key === 'Backspace') {
-        if (key === '.') {
-        // Check if adding another decimal point
-        if (currentInput.includes('.')) {
-            event.preventDefault();
-        } else if (currentInput.includes('.') && currentInput.split('.')[1]?.length >= 2) {
-            // Prevent adding more than 2 decimal places
-            event.preventDefault();
-        } else {
-            // Append the key to the current input
-            formattedPrice.value = currentInput + key;
+//will come back to this later
+// const formattedPrice = ref('');
+// const formatAmount = (event) => {
+//     const key = event.key;
+//     const currentInput = formattedPrice.value;
+//     // Allow numbers, backspace, and a single decimal point
+//     if (/[\d.]/.test(key) || key === 'Backspace') {
+//         if (key === '.') {
+//         // Check if adding another decimal point
+//         if (currentInput.includes('.')) {
+//             event.preventDefault();
+//         } else if (currentInput.includes('.') && currentInput.split('.')[1]?.length >= 2) {
+//             // Prevent adding more than 2 decimal places
+//             event.preventDefault();
+//         } else {
+//             // Append the key to the current input
+//             formattedPrice.value = currentInput + key;
+//         }
+//         } else {
+//         // Check if there are more than 2 digits after the decimal point
+//         const parts = currentInput.split('.');
+//         if (parts[1]?.length >= 2) {
+//             event.preventDefault();
+//         } else {
+//             formattedPrice.value = currentInput + key;
+//         }
+//         }
+//     } else {
+//         event.preventDefault();
+//     }
+// }
+
+const submitForm = () => {
+    const yearInt = parseInt(form.year);
+    const priceString = form.price;
+    const priceInteger = parseInt(priceString.replace(".", ""));
+    //const rec = form.recurring === "No" ? false : true; 
+    const data = {
+        "expense": {
+            "name": form.name,
+            "month": form.month,
+            "year": yearInt,
+            "type": form.type,
+            "recurring": form.recurring,
+            "price": priceInteger
         }
-        } else {
-        // Check if there are more than 2 digits after the decimal point
-        const parts = currentInput.split('.');
-        if (parts[1]?.length >= 2) {
-            event.preventDefault();
-        } else {
-            formattedPrice.value = currentInput + key;
+    }; 
+    axios.post(route('api.expense.store'), data, {
+        headers: {
+            'Content-Type': 'application/json'
         }
-        }
-    } else {
-        event.preventDefault();
-    }
+    }).then(data => {
+                    window.location.href = "/expenses";
+                })
+                .catch(error=>{
+                    console.log(error.response);
+                })
 }
+
+const currentYear = () => {
+    return new Date().getFullYear();
+}
+
 </script>
 
 <template>
@@ -61,7 +96,7 @@ const formatAmount = (event) => {
                 Fill out the information needed for the expense record.
             </p>
         </header>
-        <form @submit.prevent="form.put(route('profile.update'))" class="mt-6 space-y-6">
+        <form @submit.prevent="submitForm" class="mt-6 space-y-6">
             <div>
                 <InputLabel for="name" value="Expense Name" />
 
@@ -81,11 +116,10 @@ const formatAmount = (event) => {
                 <InputLabel for="name" value="Amount" />
 
                 <TextInput
-                    id="amount"
+                    id="price"
                     type="text"
                     class="mt-1 block w-1/5"
-                    v-model="form.amount"
-                    @keypress="formatAmount"
+                    v-model="form.price"
                     required
                     autofocus
                     style="text-align: right;"
@@ -95,56 +129,96 @@ const formatAmount = (event) => {
                 <InputError class="mt-2" :message="form.errors.price" />
             </div>
             <div>
-                <InputLabel for="type" value="Type" />
+                <InputLabel
+                    id="type"
+                    for="type"
+                    value="Type"
+                />
                 <!--move this into a separate component-->
-                <select class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                <select
+                    class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    v-model="form.type"
+                >
                     <option disabled value="">Please select a type</option>
-                    <option>Entertainment</option>
-                    <option>Investments</option>
-                    <option>Health</option>
-                    <option>Home</option>
-                    <option>Miscellaneous</option>
-                    <option>Savings</option>
-                    <option>Transportation</option>
-                    <option>Utilities</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Investments">Investments</option>
+                    <option value="Health">Health</option>
+                    <option value="Home">Home</option>
+                    <option value="Miscellaneous">Miscellaneous</option>
+                    <option value="Savings">Savings</option>
+                    <option value="Transportation">Transportation</option>
+                    <option value="Utilities">Utilities</option>
                 </select>
             </div>
             <div>
-                <InputLabel for="month" value="Month" />
+                <InputLabel
+                    id="month"
+                    for="month"
+                    value="Month"
+                />
                 <!--move this into a separate component-->
-                <select class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                <select
+                    class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    v-model="form.month"
+                >
                     <option disabled value="">Please select a month</option>
-                    <option>January</option>
-                    <option>February</option>
-                    <option>March</option>
-                    <option>April</option>
-                    <option>May</option>
-                    <option>June</option>
-                    <option>July</option>
-                    <option>August</option>
-                    <option>September</option>
-                    <option>October</option>
-                    <option>November</option>
-                    <option>December</option>
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
                 </select>
             </div>
             <div>
-                <InputLabel for="year" value="Year" />
+                <InputLabel
+                    id="year"
+                    for="year"
+                    value="Year"
+                />
                 <!--move this into a separate component-->
-                <select class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                <select
+                    class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    v-model="form.year"
+                >
                     <option disabled value="">Please select a year</option>
-                    <option>{{ new Date().getFullYear() }}</option>
+                    <option :value="currentYear()">{{ currentYear() }}</option>
                 </select>
             </div>
             <!--change to checkbox afterwards-->
             <div>
-                <InputLabel for="recurring" value="recurring" />
+                <InputLabel
+                    id="recurring"
+                    for="recurring"
+                    value="Recurring?"
+                />
                 <!--move this into a separate component-->
-                <select class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                <select
+                    class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    v-model="form.recurring"
+                >
                     <option disabled value="">Please select a choice</option>
-                    <option>No</option>
-                    <option>Yes</option>
+                    <option value=false>No</option>
+                    <option value=true>Yes</option>
                 </select>
+            </div>
+            <div class="flex items-center gap-4">
+                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+
+                <Transition
+                    enter-active-class="transition ease-in-out"
+                    enter-from-class="opacity-0"
+                    leave-active-class="transition ease-in-out"
+                    leave-to-class="opacity-0"
+                >
+                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>
+                </Transition>
             </div>
         </form>
     </section>
