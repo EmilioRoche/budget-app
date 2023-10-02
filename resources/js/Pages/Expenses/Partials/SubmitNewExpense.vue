@@ -5,7 +5,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
-import { ref } from 'vue';
+import { validatePrice, priceMagnitude } from '@/utils/helper';
 
 defineProps({
 });
@@ -22,43 +22,26 @@ const form = useForm({
 });
 
 
-//will come back to this later
-// const formattedPrice = ref('');
-// const formatAmount = (event) => {
-//     const key = event.key;
-//     const currentInput = formattedPrice.value;
-//     // Allow numbers, backspace, and a single decimal point
-//     if (/[\d.]/.test(key) || key === 'Backspace') {
-//         if (key === '.') {
-//         // Check if adding another decimal point
-//         if (currentInput.includes('.')) {
-//             event.preventDefault();
-//         } else if (currentInput.includes('.') && currentInput.split('.')[1]?.length >= 2) {
-//             // Prevent adding more than 2 decimal places
-//             event.preventDefault();
-//         } else {
-//             // Append the key to the current input
-//             formattedPrice.value = currentInput + key;
-//         }
-//         } else {
-//         // Check if there are more than 2 digits after the decimal point
-//         const parts = currentInput.split('.');
-//         if (parts[1]?.length >= 2) {
-//             event.preventDefault();
-//         } else {
-//             formattedPrice.value = currentInput + key;
-//         }
-//         }
-//     } else {
-//         event.preventDefault();
-//     }
-// }
-
 const submitForm = () => {
     const yearInt = parseInt(form.year);
     const priceString = form.price;
-    const priceInteger = parseInt(priceString.replace(".", ""));
-    //const rec = form.recurring === "No" ? false : true; 
+    const priceValidation = validatePrice(priceString); 
+
+    if(!priceValidation) {
+        form.errors.price = 'Invalid price format. Use digits and up to 2 decimal places.';
+        return;
+    }
+    const fieldsToValidate = ['type', 'month', 'year', 'recurring'];
+    for(const field of fieldsToValidate) {
+        if (form[field] === '') {
+            form.errors[field] = `Please select a valid ${field}.`;
+        return; // Prevent form submission
+        } else {
+            // Clear the error message if the field is valid
+            form.errors[field] = '';
+        }
+    }
+    const priceInteger = priceMagnitude(priceString);
     const data = {
         "expense": {
             "name": form.name,
@@ -74,6 +57,7 @@ const submitForm = () => {
             'Content-Type': 'application/json'
         }
     }).then(data => {
+                    //update potentially?
                     window.location.href = "/expenses";
                 })
                 .catch(error=>{
@@ -149,6 +133,7 @@ const currentYear = () => {
                     <option value="Transportation">Transportation</option>
                     <option value="Utilities">Utilities</option>
                 </select>
+                <InputError class="mt-2" :message="form.errors.type" />
             </div>
             <div>
                 <InputLabel
@@ -175,6 +160,7 @@ const currentYear = () => {
                     <option value="November">November</option>
                     <option value="December">December</option>
                 </select>
+                <InputError class="mt-2" :message="form.errors.month" />
             </div>
             <div>
                 <InputLabel
@@ -190,6 +176,7 @@ const currentYear = () => {
                     <option disabled value="">Please select a year</option>
                     <option :value="currentYear()">{{ currentYear() }}</option>
                 </select>
+                <InputError class="mt-2" :message="form.errors.year" />
             </div>
             <!--change to checkbox afterwards-->
             <div>
@@ -207,6 +194,7 @@ const currentYear = () => {
                     <option value=false>No</option>
                     <option value=true>Yes</option>
                 </select>
+                <InputError class="mt-2" :message="form.errors.recurring" />
             </div>
             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
