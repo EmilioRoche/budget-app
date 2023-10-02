@@ -5,7 +5,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
-import { validatePrice } from '@/utils/helper';
+import { validatePrice, priceMagnitude } from '@/utils/helper';
 
 defineProps({
 });
@@ -25,8 +25,6 @@ const form = useForm({
 const submitForm = () => {
     const yearInt = parseInt(form.year);
     const priceString = form.price;
-    const priceInteger = parseInt(priceString.replace(".", ""));
-
     const priceValidation = validatePrice(priceString); 
 
     if(!priceValidation) {
@@ -43,7 +41,7 @@ const submitForm = () => {
             form.errors[field] = '';
         }
     }
-
+    const priceInteger = priceMagnitude(priceString);
     const data = {
         "expense": {
             "name": form.name,
