@@ -33,6 +33,17 @@ const submitForm = () => {
         form.errors.price = 'Invalid price format. Use digits and up to 2 decimal places.';
         return;
     }
+    const fieldsToValidate = ['type', 'month', 'year', 'recurring'];
+    for(const field of fieldsToValidate) {
+        if (form[field] === '') {
+            form.errors[field] = `Please select a valid ${field}.`;
+        return; // Prevent form submission
+        } else {
+            // Clear the error message if the field is valid
+            form.errors[field] = '';
+        }
+    }
+
     const data = {
         "expense": {
             "name": form.name,
@@ -48,6 +59,7 @@ const submitForm = () => {
             'Content-Type': 'application/json'
         }
     }).then(data => {
+                    //update potentially?
                     window.location.href = "/expenses";
                 })
                 .catch(error=>{
@@ -123,6 +135,7 @@ const currentYear = () => {
                     <option value="Transportation">Transportation</option>
                     <option value="Utilities">Utilities</option>
                 </select>
+                <InputError class="mt-2" :message="form.errors.type" />
             </div>
             <div>
                 <InputLabel
@@ -149,6 +162,7 @@ const currentYear = () => {
                     <option value="November">November</option>
                     <option value="December">December</option>
                 </select>
+                <InputError class="mt-2" :message="form.errors.month" />
             </div>
             <div>
                 <InputLabel
@@ -164,6 +178,7 @@ const currentYear = () => {
                     <option disabled value="">Please select a year</option>
                     <option :value="currentYear()">{{ currentYear() }}</option>
                 </select>
+                <InputError class="mt-2" :message="form.errors.year" />
             </div>
             <!--change to checkbox afterwards-->
             <div>
@@ -181,6 +196,7 @@ const currentYear = () => {
                     <option value=false>No</option>
                     <option value=true>Yes</option>
                 </select>
+                <InputError class="mt-2" :message="form.errors.recurring" />
             </div>
             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
